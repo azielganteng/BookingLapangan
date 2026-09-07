@@ -23,17 +23,17 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     
-public function boot(): void
-{
-    // Kode Force HTTPS bawaan Anda
-    if (config('app.env') === 'production') {
-        URL::forceScheme('https');
+    public function boot(): void
+    {
+        if (
+            request()->header('x-forwarded-proto') === 'https'
+            || request()->isSecure()
+            || str_contains(request()->getHttpHost(), 'trycloudflare.com')
+            || config('app.env') === 'production'
+        ) {
+            URL::forceScheme('https');
+        }
     }
-
-    // Menggunakan View Composer + Caching agar performa kencang
-   
-        
-}
 }
 
 
