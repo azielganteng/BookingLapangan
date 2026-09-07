@@ -27,8 +27,11 @@ class LapanganFactory extends Factory
             ]),
             'jenis_lapangan' =>
             JenisLapangan::inRandomOrder()->first()->id,
-            'deskripsi_lapangan'=>fake()->sentence(),
-            'harga_sewa'=>fake()->numberBetween(1000,3000)
+            'deskripsi_lapangan' => fake()->sentence(),
+            'harga_sewa' => fake()->numberBetween(50000, 150000),
+            'status' => 'Tersedia',
+            'jam_buka' => '08:00:00',
+            'jam_tutup' => '22:00:00',
         ];
     }
 }

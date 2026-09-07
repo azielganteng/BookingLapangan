@@ -38,8 +38,9 @@ class BookingSeeder extends Seeder
 
                 'status' => collect([
                     'pending',
-                    'success',
-                    'cancel'
+                    'confirmed',
+                    'completed',
+                    'cancelled'
                 ])->random()
             ]);
         }

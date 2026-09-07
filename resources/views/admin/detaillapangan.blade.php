@@ -1,177 +1,164 @@
 @extends('layouts.layout')
 
+@section('title', 'Detail ' . $lapangan->nama_lapangan)
+
 @section('content')
 
-<div class="font-sans pb-8">
+<div class="p-4 sm:p-8">
 
-    {{-- ── Top Bar ── --}}
-    <div class="flex items-center justify-between px-5 py-3 bg-white border border-green-200 rounded-xl mb-4">
-        <div class="flex items-center gap-2 text-xs text-green-700">
-            <i class="fas fa-home text-green-400"></i>
-            Admin
-            <i class="fas fa-chevron-right text-green-300 text-xs"></i>
-            Lapangan
-            <i class="fas fa-chevron-right text-green-300 text-xs"></i>
-            <span class="font-semibold text-green-800">Detail</span>
+    {{-- ── Top Navigation Bar ── --}}
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-zinc-900">{{ $lapangan->nama_lapangan }}</h1>
+            <p class="text-zinc-500 text-sm mt-1">
+                Kategori: <span class="font-semibold text-zinc-800">{{ $lapangan->jenisLapangan->nama_jenis ?? '-' }}</span> &bull;
+                ID: LPG-{{ str_pad($lapangan->id, 3, '0', STR_PAD_LEFT) }}
+            </p>
         </div>
-        <a href="{{ route('admin.dashboard') }}"
-           class="inline-flex items-center gap-2 text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-2 hover:bg-green-100 transition-colors">
-            <i class="fas fa-arrow-left"></i> Kembali
-        </a>
-    </div>
-
-    {{-- ── Page Header ── --}}
-    <div class="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-6 py-5 mb-4">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-green-100 border border-green-200 flex items-center justify-center text-green-700 text-xl flex-shrink-0">
-                <i class="fas fa-map-marker-alt"></i>
-            </div>
-            <div>
-                <div class="text-base font-semibold text-green-900">{{ $lapangan->nama_lapangan }}</div>
-                <div class="text-xs text-green-500 mt-0.5">
-                    ID: LPG-{{ str_pad($lapangan->id, 3, '0', STR_PAD_LEFT) }} &middot; Ditambahkan {{ \Carbon\Carbon::parse($lapangan->created_at)->format('d M Y') }}
-                </div>
-            </div>
-        </div>
-        <span class="inline-flex items-center gap-2 bg-white border border-green-200 text-green-700 text-xs font-medium rounded-full px-4 py-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-            Aktif
-        </span>
-    </div>
-
-    {{-- ── Stat Row ── --}}
-    <div class="grid grid-cols-3 gap-3 mb-4">
-        <div class="bg-white border border-green-200 rounded-xl px-5 py-4 flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-green-50 border border-green-200 flex items-center justify-center text-green-600 flex-shrink-0">
-                <i class="fas fa-calendar-check text-sm"></i>
-            </div>
-            <div>
-                <div class="text-xs text-green-500 uppercase tracking-wide font-medium">Total Booking</div>
-                <div class="text-base font-semibold text-green-900 mt-0.5">{{ $lapangan->bookings_count ?? 0 }}</div>
-            </div>
-        </div>
-        <div class="bg-white border border-green-200 rounded-xl px-5 py-4 flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-green-50 border border-green-200 flex items-center justify-center text-green-600 flex-shrink-0">
-                <i class="fas fa-clock text-sm"></i>
-            </div>
-            <div>
-                <div class="text-xs text-green-500 uppercase tracking-wide font-medium">Jam Terpakai</div>
-                <div class="text-base font-semibold text-green-900 mt-0.5">{{ ($lapangan->bookings_count ?? 0) * 2 }} jam</div>
-            </div>
-        </div>
-        <div class="bg-white border border-green-200 rounded-xl px-5 py-4 flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-green-50 border border-green-200 flex items-center justify-center text-green-600 flex-shrink-0">
-                <i class="fas fa-tag text-sm"></i>
-            </div>
-            <div>
-                <div class="text-xs text-green-500 uppercase tracking-wide font-medium">Harga / Jam</div>
-                <div class="text-base font-semibold text-green-900 mt-0.5">Rp {{ number_format($lapangan->harga_sewa, 0, ',', '.') }}</div>
-            </div>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('edit-lapangan', $lapangan->id) }}"
+               class="inline-flex items-center gap-1.5 px-4 py-2 bg-zinc-900 hover:bg-zinc-700 text-white rounded-xl text-sm font-semibold transition-colors">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                Edit
+            </a>
+            <a href="{{ route('admin.semua-lapangan') }}"
+               class="inline-flex items-center gap-1.5 px-4 py-2 border border-zinc-200 rounded-xl text-sm font-semibold text-zinc-600 hover:bg-zinc-50 transition-colors">
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali
+            </a>
         </div>
     </div>
 
-    {{-- ── Body Grid ── --}}
-    <div class="grid grid-cols-12 gap-4">
+    {{-- ── Stat Cards ── --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white border border-zinc-200 rounded-2xl p-4 sm:p-5 shadow-sm">
+            <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">Total Booking</p>
+            <p class="text-2xl font-bold text-blue-600 mt-2">{{ $totalBooking ?? 0 }}</p>
+        </div>
+        <div class="bg-white border border-zinc-200 rounded-2xl p-4 sm:p-5 shadow-sm">
+            <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">Jam Terpakai</p>
+            <p class="text-2xl font-bold text-orange-600 mt-2">{{ $jamTerpakai ?? 0 }} Jam</p>
+        </div>
+        <div class="bg-white border border-zinc-200 rounded-2xl p-4 sm:p-5 shadow-sm">
+            <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">Harga Sewa</p>
+            <p class="text-2xl font-bold text-green-600 mt-2">Rp {{ number_format($lapangan->harga_sewa, 0, ',', '.') }}<span class="text-xs text-zinc-400 font-normal">/jam</span></p>
+        </div>
+        <div class="bg-white border border-zinc-200 rounded-2xl p-4 sm:p-5 shadow-sm">
+            <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">Total Pendapatan</p>
+            <p class="text-2xl font-bold text-purple-600 mt-2">Rp {{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}</p>
+        </div>
+    </div>
 
-        {{-- ── Left: Photo Card ── --}}
-        <div class="col-span-4">
-            <div class="bg-white border border-green-200 rounded-xl overflow-hidden h-full">
+    {{-- ── Detail Content Grid ── --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                {{-- Photo Frame --}}
-                <div class="bg-green-50 h-48 flex items-center justify-center border-b border-green-100">
-                    @if($lapangan->gambar_lapangan)
-                        <img src="{{ $lapangan->gambar_lapangan }}"
-                             alt="Foto {{ $lapangan->nama_lapangan }}"
-                             class="w-full h-48 object-cover">
+        {{-- Left: Foto & Info Utama --}}
+        <div class="bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-sm">
+            <div class="w-full h-64 bg-zinc-100 flex items-center justify-center relative">
+                @if($lapangan->gambar_url)
+                    <img src="{{ $lapangan->gambar_url }}"
+                         alt="Foto {{ $lapangan->nama_lapangan }}"
+                         class="w-full h-64 object-cover">
+                @else
+                    <div class="flex flex-col items-center gap-2 text-zinc-400">
+                        <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span class="text-xs">Belum ada foto</span>
+                    </div>
+                @endif
+
+                <div class="absolute top-3 right-3">
+                    @if(strtolower($lapangan->status ?? 'tersedia') === 'tersedia')
+                        <span class="px-3 py-1 bg-green-500 text-white font-bold text-xs rounded-full shadow">Tersedia</span>
                     @else
-                        <div class="flex flex-col items-center gap-2 text-green-300">
-                            <i class="fas fa-image text-4xl"></i>
-                            <span class="text-xs">Belum ada foto</span>
-                        </div>
+                        <span class="px-3 py-1 bg-red-500 text-white font-bold text-xs rounded-full shadow">Penuh / Ditutup</span>
                     @endif
                 </div>
+            </div>
 
-                {{-- Quick Fields --}}
-                <div class="divide-y divide-green-50">
-                    <div class="flex items-center justify-between px-5 py-3">
-                        <span class="flex items-center gap-2 text-xs text-green-500">
-                            <i class="fas fa-futbol text-green-400"></i> Jenis
-                        </span>
-                        <span class="text-xs font-medium text-green-800 bg-green-50 border border-green-200 rounded-md px-2.5 py-0.5">
-                            {{ $lapangan->jenis_lapangan }}
-                        </span>
-                    </div>
-                    <div class="flex items-center justify-between px-5 py-3">
-                        <span class="flex items-center gap-2 text-xs text-green-500">
-                            <i class="fas fa-users text-green-400"></i> Status
-                        </span>
-                        <span class="inline-flex items-center gap-1.5 text-xs font-medium text-green-700">
-                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                            Aktif
-                        </span>
-                    </div>
-                    <div class="flex items-center justify-between px-5 py-3">
-                        <span class="flex items-center gap-2 text-xs text-green-500">
-                            <i class="fas fa-calendar text-green-400"></i> Dibuat
-                        </span>
-                        <span class="text-xs font-medium text-green-800">
-                            {{ \Carbon\Carbon::parse($lapangan->created_at)->format('d M Y') }}
-                        </span>
-                    </div>
+            <div class="p-5 divide-y divide-zinc-100 text-sm">
+                <div class="py-3 flex items-center justify-between first:pt-0">
+                    <span class="text-zinc-400">Jenis Lapangan</span>
+                    <span class="font-semibold text-zinc-800 bg-zinc-100 px-3 py-1 rounded-lg text-xs">{{ $lapangan->jenisLapangan->nama_jenis ?? '-' }}</span>
                 </div>
-
+                <div class="py-3 flex items-center justify-between">
+                    <span class="text-zinc-400">Jam Operasional</span>
+                    <span class="font-medium text-zinc-700">
+                        {{ \Illuminate\Support\Str::substr($lapangan->jam_buka, 0, 5) }} – {{ \Illuminate\Support\Str::substr($lapangan->jam_tutup, 0, 5) }}
+                    </span>
+                </div>
+                <div class="py-3 flex items-center justify-between">
+                    <span class="text-zinc-400">Status</span>
+                    <span class="font-medium {{ strtolower($lapangan->status ?? 'tersedia') === 'tersedia' ? 'text-green-600' : 'text-red-600' }}">
+                        {{ $lapangan->status ?? 'Tersedia' }}
+                    </span>
+                </div>
+                <div class="py-3 flex items-center justify-between last:pb-0">
+                    <span class="text-zinc-400">Dibuat Pada</span>
+                    <span class="font-medium text-zinc-700">{{ \Carbon\Carbon::parse($lapangan->created_at)->format('d M Y') }}</span>
+                </div>
             </div>
         </div>
 
-        {{-- ── Right: Info Card ── --}}
-        <div class="col-span-8">
-            <div class="bg-white border border-green-200 rounded-xl overflow-hidden h-full">
+        {{-- Right: Deskripsi & Booking Terakhir --}}
+        <div class="lg:col-span-2 space-y-6">
 
-                {{-- Card Header --}}
-                <div class="flex items-center justify-between px-6 py-4 bg-green-50 border-b border-green-200">
-                    <span class="text-xs font-semibold text-green-600 uppercase tracking-widest flex items-center gap-2">
-                        <i class="fas fa-info-circle"></i> Informasi Lapangan
-                    </span>
-                    <a href="{{ route('edit-lapangan', $lapangan->id) }}"
-                       class="inline-flex items-center gap-2 text-xs font-semibold text-white bg-green-700 hover:bg-green-800 rounded-lg px-4 py-2 transition-colors">
-                        <i class="fas fa-pen"></i> Edit
-                    </a>
-                </div>
-
-                {{-- Info Grid --}}
-                <div class="grid grid-cols-2 divide-x divide-green-50">
-
-                    <div class="px-6 py-5 border-b border-green-50">
-                        <div class="text-xs font-medium text-green-400 uppercase tracking-wider mb-1.5">Nama Lapangan</div>
-                        <div class="text-sm font-semibold text-green-900">{{ $lapangan->nama_lapangan }}</div>
-                    </div>
-
-                    <div class="px-6 py-5 border-b border-green-50">
-                        <div class="text-xs font-medium text-green-400 uppercase tracking-wider mb-1.5">Jenis Lapangan</div>
-                        <span class="inline-block text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-md px-3 py-1">
-                            {{ $lapangan->jenis_lapangan }}
-                        </span>
-                    </div>
-
-                    <div class="col-span-2 px-6 py-5 border-b border-green-50">
-                        <div class="text-xs font-medium text-green-400 uppercase tracking-wider mb-1.5">Harga Sewa per Jam</div>
-                        <div class="text-lg font-semibold text-green-700">
-                            Rp {{ number_format($lapangan->harga_sewa, 0, ',', '.') }}
-                        </div>
-                    </div>
-
-                    <div class="col-span-2 px-6 py-5">
-                        <div class="text-xs font-medium text-green-400 uppercase tracking-wider mb-2">Deskripsi</div>
-                        <div class="text-sm text-green-700 leading-relaxed bg-green-50 border border-green-100 rounded-lg px-4 py-3">
-                            {{ $lapangan->deskripsi ?? 'Tidak ada deskripsi untuk lapangan ini.' }}
-                        </div>
-                    </div>
-
+            {{-- Card Deskripsi --}}
+            <div class="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm">
+                <h2 class="text-base font-bold text-zinc-900 mb-3">Deskripsi & Fasilitas</h2>
+                <div class="text-sm text-zinc-600 leading-relaxed bg-zinc-50 border border-zinc-100 rounded-xl p-4">
+                    {{ $lapangan->deskripsi_lapangan ?? 'Tidak ada deskripsi tambahan untuk lapangan ini.' }}
                 </div>
             </div>
+
+            {{-- Card Booking Terbaru di Lapangan Ini --}}
+            <div class="bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-sm">
+                <div class="px-6 py-4 border-b border-zinc-100 flex items-center justify-between">
+                    <h2 class="text-base font-bold text-zinc-900">Riwayat Booking Terbaru</h2>
+                    <a href="{{ route('admin.daftar-booking') }}" class="text-xs text-blue-600 hover:underline">Semua Booking &rarr;</a>
+                </div>
+
+                <div class="divide-y divide-zinc-50">
+                    @forelse($recentBookings ?? [] as $b)
+                        <div class="px-6 py-3.5 flex items-center justify-between hover:bg-zinc-50 transition-colors">
+                            <div>
+                                <p class="text-sm font-semibold text-zinc-800">{{ $b->user->name ?? 'Pengguna' }}</p>
+                                <p class="text-xs text-zinc-400 mt-0.5">
+                                    {{ \Carbon\Carbon::parse($b->tanggal)->format('d M Y') }} &bull;
+                                    {{ \Carbon\Carbon::parse($b->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($b->jam_selesai)->format('H:i') }}
+                                </p>
+                            </div>
+                            <div>
+                                @php
+                                    $stColor = match($b->status) {
+                                        'pending' => 'bg-yellow-100 text-yellow-700',
+                                        'confirmed' => 'bg-blue-100 text-blue-700',
+                                        'completed' => 'bg-green-100 text-green-700',
+                                        default => 'bg-red-100 text-red-700'
+                                    };
+                                @endphp
+                                <span class="px-2.5 py-1 text-xs font-semibold rounded-full {{ $stColor }}">
+                                    {{ ucfirst($b->status) }}
+                                </span>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="py-8 text-center text-zinc-400 text-sm">
+                            Belum ada riwayat booking untuk lapangan ini
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
         </div>
 
     </div>
+
 </div>
 
 @endsection

@@ -68,8 +68,8 @@
             <div class="group bg-white rounded-2xl overflow-hidden border border-zinc-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
 
                 <div class="relative overflow-hidden">
-                    @if($item->gambar_lapangan)
-                        <img src="{{ $item->gambar_lapangan }}"
+                    @if($item->gambar_url)
+                        <img src="{{ $item->gambar_url }}"
                              class="w-full h-48 sm:h-52 object-cover group-hover:scale-105 transition-transform duration-500 {{ !$isBuka ? 'brightness-75' : '' }}"
                              alt="{{ $item->nama_lapangan }}">
                     @else

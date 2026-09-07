@@ -15,16 +15,37 @@ class Lapangan extends Model
         'gambar_lapangan',
         'deskripsi_lapangan',
         'harga_sewa',
+        'status',
         'jam_buka',
         'jam_tutup'
     ];
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
     public function booking()
     {
-        return $this->hasMany(booking::class);
+        return $this->bookings();
     }
+
     public function jenisLapangan()
     {
-        return $this->belongsTo(JenisLapangan::class,'jenis_lapangan' ,'id');
+        return $this->belongsTo(JenisLapangan::class, 'jenis_lapangan', 'id');
+    }
+
+    public function getGambarUrlAttribute(): ?string
+    {
+        if (!$this->gambar_lapangan) {
+            return null;
+        }
+
+        if (str_starts_with($this->gambar_lapangan, 'http://') || str_starts_with($this->gambar_lapangan, 'https://')) {
+            return $this->gambar_lapangan;
+        }
+
+        return asset('storage/' . $this->gambar_lapangan);
     }
 }
 

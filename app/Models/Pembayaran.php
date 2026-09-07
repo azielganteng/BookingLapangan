@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Pembayaran extends Model
 {
     protected $fillable = [
-        'booking_id',
+        'booking',
         'metode_pembayaran',
+        'bukti_pembayaran',
         'status',
-        'total pembayaran'
     ];
-    public function booking(){
-        return $this->belongsTo(Booking::class);
+
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class, 'booking', 'id');
     }
 }

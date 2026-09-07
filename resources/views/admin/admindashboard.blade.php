@@ -4,130 +4,137 @@
 
 @section('content')
 
-<div class="p-4 sm:p-6">
+<div class="p-4 sm:p-8">
 
     <div class="mb-6 sm:mb-8">
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">Dashboard Admin</h1>
-        <p class="text-gray-500 mt-1 text-sm sm:text-base">Statistik booking dan pendapatan lapangan</p>
+        <h1 class="text-2xl sm:text-3xl font-bold text-zinc-900">Dashboard Admin</h1>
+        <p class="text-zinc-500 mt-1 text-sm sm:text-base">Ringkasan statistik booking dan performa pendapatan lapangan</p>
     </div>
 
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 mb-6 sm:mb-8">
+    {{-- Stat Cards --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 sm:mb-8">
 
-        <div class="bg-white rounded-2xl shadow-md p-4 sm:p-5 border">
-            <p class="text-gray-500 text-xs sm:text-sm">Total Lapangan</p>
-            <h2 class="text-2xl sm:text-4xl font-bold text-green-600 mt-2 sm:mt-3">{{ $totalLapangan ?? 0}}</h2>
+        <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-zinc-200">
+            <p class="text-zinc-400 text-xs sm:text-sm font-semibold uppercase tracking-wider">Total Lapangan</p>
+            <h2 class="text-2xl sm:text-3xl font-black text-zinc-900 mt-2">{{ $totalLapangan ?? 0 }}</h2>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-md p-4 sm:p-5 border">
-            <p class="text-gray-500 text-xs sm:text-sm">Total Booking</p>
-            <h2 class="text-2xl sm:text-4xl font-bold text-blue-600 mt-2 sm:mt-3">{{ $totalBookingSemua ?? 0}}</h2>
+        <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-zinc-200">
+            <p class="text-zinc-400 text-xs sm:text-sm font-semibold uppercase tracking-wider">Total Booking</p>
+            <h2 class="text-2xl sm:text-3xl font-black text-blue-600 mt-2">{{ $totalBookingSemua ?? 0 }}</h2>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-md p-4 sm:p-5 border">
-            <p class="text-gray-500 text-xs sm:text-sm">Booking Pending</p>
-            <h2 class="text-2xl sm:text-4xl font-bold text-yellow-500 mt-2 sm:mt-3">{{ $bookingPending ?? 0}}</h2>
+        <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-zinc-200">
+            <p class="text-zinc-400 text-xs sm:text-sm font-semibold uppercase tracking-wider">Booking Pending</p>
+            <h2 class="text-2xl sm:text-3xl font-black text-yellow-600 mt-2">{{ $bookingPending ?? 0 }}</h2>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-md p-4 sm:p-5 border">
-            <p class="text-gray-500 text-xs sm:text-sm">Total Pendapatan</p>
-            <h2 class="text-xl sm:text-3xl font-bold text-purple-600 mt-2 sm:mt-3">
-                Rp {{ number_format($totalPendapatanSemua, 0, ',', '.') ?? 0}}
+        <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-zinc-200">
+            <p class="text-zinc-400 text-xs sm:text-sm font-semibold uppercase tracking-wider">Total Pendapatan</p>
+            <h2 class="text-xl sm:text-2xl font-black text-green-600 mt-2">
+                Rp {{ number_format($totalPendapatanSemua ?? 0, 0, ',', '.') }}
             </h2>
         </div>
 
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+    {{-- Charts Grid --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 sm:mb-8">
 
-        <div class="bg-white rounded-2xl shadow-md p-4 sm:p-5 border">
-            <h2 class="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-5">Grafik Total Booking</h2>
+        <div class="bg-white rounded-2xl shadow-sm p-5 border border-zinc-200">
+            <h2 class="text-base font-bold text-zinc-800 mb-4">Grafik Total Booking</h2>
             {!! $bookingChart->container() !!}
         </div>
 
-        <div class="bg-white rounded-2xl shadow-md p-4 sm:p-5 border">
-            <h2 class="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-5">Grafik Pendapatan</h2>
+        <div class="bg-white rounded-2xl shadow-sm p-5 border border-zinc-200">
+            <h2 class="text-base font-bold text-zinc-800 mb-4">Grafik Pendapatan</h2>
             {!! $pendapatanChart->container() !!}
         </div>
 
     </div>
 
-    <div class="bg-white shadow-md rounded-2xl overflow-hidden border">
+    {{-- Recent Bookings Table --}}
+    <div class="bg-white shadow-sm rounded-2xl overflow-hidden border border-zinc-200">
 
-        <div class="p-4 sm:p-5 border-b">
-            <h2 class="text-base sm:text-lg font-semibold text-gray-700">Booking Masuk</h2>
+        <div class="p-4 sm:p-5 border-b border-zinc-100 flex items-center justify-between">
+            <h2 class="text-base font-bold text-zinc-800">Booking Masuk Terbaru</h2>
+            <a href="{{ route('admin.daftar-booking') }}" class="text-xs font-semibold text-blue-600 hover:underline">
+                Lihat Semua &rarr;
+            </a>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
-                <thead class="bg-gray-100 text-left text-gray-700">
+            <table class="min-w-full text-sm text-left">
+                <thead class="bg-zinc-50 text-zinc-500 uppercase text-xs font-semibold border-b border-zinc-200">
                     <tr>
-                        <th class="px-4 py-3 whitespace-nowrap">Pemesan</th>
-                        <th class="px-4 py-3 whitespace-nowrap">Lapangan</th>
-                        <th class="px-4 py-3 whitespace-nowrap">Jenis</th>
-                        <th class="px-4 py-3 whitespace-nowrap">Tanggal</th>
-                        <th class="px-4 py-3 whitespace-nowrap">Jam</th>
-                        <th class="px-4 py-3 whitespace-nowrap">Status</th>
-                        <th class="px-4 py-3 whitespace-nowrap">Total</th>
+                        <th class="px-5 py-3.5 whitespace-nowrap">Pemesan</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Lapangan</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Kategori</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Tanggal</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Jam</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Status</th>
+                        <th class="px-5 py-3.5 whitespace-nowrap text-right">Total</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-zinc-100">
                     @forelse ($bookings as $item)
-                    <tr class="border-b hover:bg-gray-50 transition">
+                    <tr class="hover:bg-zinc-50 transition-colors">
 
-                        <td class="px-4 py-3 font-medium whitespace-nowrap">
-                            {{ $item->user->name ?? 'User' }}
+                        <td class="px-5 py-4 font-semibold text-zinc-900 whitespace-nowrap">
+                            {{ $item->user->name ?? 'Pengguna' }}
                         </td>
 
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            {{ $item->lapangan->nama_lapangan }}
+                        <td class="px-4 py-4 whitespace-nowrap text-zinc-800 font-medium">
+                            {{ $item->lapangan->nama_lapangan ?? 'Lapangan' }}
                         </td>
 
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <span class="bg-gray-200 text-xs px-2 py-1 rounded">
-                                {{ $item->lapangan->jenisLapangan->nama_jenis }}
+                        <td class="px-4 py-4 whitespace-nowrap">
+                            <span class="bg-zinc-100 text-zinc-600 text-xs px-2.5 py-1 rounded-lg font-medium">
+                                {{ $item->lapangan->jenisLapangan->nama_jenis ?? '-' }}
                             </span>
                         </td>
 
-                        <td class="px-4 py-3 text-gray-600 whitespace-nowrap">
-                            {{ $item->tanggal }}
+                        <td class="px-4 py-4 text-zinc-600 whitespace-nowrap">
+                            {{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}
                         </td>
 
-                        <td class="px-4 py-3 text-gray-600 whitespace-nowrap">
-                            {{ $item->jam_mulai }} - {{ $item->jam_selesai }}
+                        <td class="px-4 py-4 text-zinc-600 whitespace-nowrap">
+                            {{ \Carbon\Carbon::parse($item->jam_mulai)->format('H:i') }} – {{ \Carbon\Carbon::parse($item->jam_selesai)->format('H:i') }}
                         </td>
 
-                        <td class="px-4 py-3 whitespace-nowrap">
+                        <td class="px-4 py-4 whitespace-nowrap">
                             @if($item->status == 'pending')
-                                <span class="bg-yellow-200 text-yellow-700 text-xs px-3 py-1 rounded-full">
+                                <span class="bg-yellow-100 text-yellow-700 text-xs font-semibold px-2.5 py-1 rounded-full">
                                     Pending
                                 </span>
                             @elseif($item->status == 'confirmed')
-                                <span class="bg-blue-200 text-blue-700 text-xs px-3 py-1 rounded-full">
+                                <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">
                                     Dikonfirmasi
                                 </span>
                             @elseif($item->status == 'completed')
-                                <span class="bg-green-200 text-green-700 text-xs px-3 py-1 rounded-full">
+                                <span class="bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
                                     Selesai
                                 </span>
                             @else
-                                <span class="bg-red-200 text-red-700 text-xs px-3 py-1 rounded-full">
+                                <span class="bg-red-100 text-red-700 text-xs font-semibold px-2.5 py-1 rounded-full">
                                     Dibatalkan
                                 </span>
                             @endif
                         </td>
 
-                        <td class="px-4 py-3 font-semibold text-green-600 whitespace-nowrap">
-    @php
-        $durasi = \Carbon\Carbon::parse($item->jam_mulai)->diffInHours(\Carbon\Carbon::parse($item->jam_selesai));
-    @endphp
-    Rp{{ number_format($item->lapangan->harga_sewa * $durasi, 0, ',', '.') }}
-</td>
+                        <td class="px-5 py-4 font-bold text-green-600 whitespace-nowrap text-right">
+                            @php
+                                $durasi = \Carbon\Carbon::parse($item->jam_mulai)->diffInHours(\Carbon\Carbon::parse($item->jam_selesai));
+                                $harga = $item->lapangan ? ($item->lapangan->harga_sewa * $durasi) : ($item->total_harga ?? 0);
+                            @endphp
+                            Rp {{ number_format($harga, 0, ',', '.') }}
+                        </td>
 
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center py-8 text-gray-500">
-                            Tidak ada booking masuk
+                        <td colspan="7" class="text-center py-10 text-zinc-400">
+                            Belum ada transaksi booking masuk
                         </td>
                     </tr>
                     @endforelse
@@ -136,7 +143,7 @@
         </div>
 
         @if($bookings->hasPages())
-            <div class="p-4">
+            <div class="p-4 border-t border-zinc-100">
                 {{ $bookings->links() }}
             </div>
         @endif

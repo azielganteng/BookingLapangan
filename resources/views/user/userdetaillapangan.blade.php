@@ -19,8 +19,8 @@
         {{-- Kiri: Foto + Deskripsi --}}
         <div class="lg:col-span-2 flex flex-col gap-4 sm:gap-6">
             <div class="bg-white rounded-2xl overflow-hidden border border-gray-100">
-                @if($lapangan->gambar_lapangan)
-                    <img src="{{ $lapangan->gambar_lapangan }}"
+                @if($lapangan->gambar_url)
+                    <img src="{{ $lapangan->gambar_url }}"
                          class="w-full h-56 sm:h-96 object-cover"
                          alt="Foto {{ $lapangan->nama_lapangan }}">
                 @else

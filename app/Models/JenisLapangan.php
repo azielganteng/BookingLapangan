@@ -13,8 +13,13 @@ class JenisLapangan extends Model
         'nama_jenis',
     ];
 
+    public function lapangans()
+    {
+        return $this->hasMany(Lapangan::class, 'jenis_lapangan', 'id');
+    }
+
     public function Lapangan()
     {
-        return $this->hasMany(lapangan::class);
+        return $this->lapangans();
     }
 }

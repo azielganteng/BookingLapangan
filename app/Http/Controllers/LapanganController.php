@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Lapangan;
 use App\Models\JenisLapangan;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class LapanganController extends Controller
 {
@@ -20,11 +22,11 @@ class LapanganController extends Controller
         $query = Lapangan::with('jenisLapangan');
 
         $totalLapangan = $query->count();
-        $lapangan = $query->latest()->paginate(5);
+        $lapangan = $query->latest()->paginate(10);
         
         $view = Auth::user()->role == 'admin' ? 'admin.admindashboard' : 'user.userdashboard';
         $bookingpending = Booking::where('status', 'pending')->count();
-        $bookingapproved = Booking::where('status', 'approved')->count();
+        $bookingapproved = Booking::where('status', 'confirmed')->count();
         $totalbooking = Booking::count();
         $bookings = Booking::with(['lapangan.jenisLapangan'])->latest()->paginate(10);
 
@@ -47,40 +49,43 @@ class LapanganController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_lapangan' => 'required',
-            'jenis_lapangan' => 'required',
-            'gambar_lapangan' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'jam_buka' => 'required',
-            'jam_tutup'=> 'required|after:jam_buka',
-            'harga_sewa' => 'required|numeric|min:0',
+            'nama_lapangan'     => 'required|string|max:255',
+            'jenis_lapangan'    => 'required|exists:jenis_lapangans,id',
+            'gambar_lapangan'   => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:3072',
+            'jam_buka'          => 'required',
+            'jam_tutup'         => 'required',
+            'harga_sewa'        => 'required|numeric|min:0',
+            'deskripsi_lapangan'=> 'nullable|string',
+            'status'            => 'nullable|in:Tersedia,Penuh',
         ], [
-            'harga_sewa.min' => 'Harga Tidak Boleh Minus'
+            'harga_sewa.min'        => 'Harga sewa tidak boleh minus',
+            'jenis_lapangan.exists' => 'Jenis lapangan tidak valid',
         ]);
 
-        $imageUrl = null;
-        
+        $imagePath = null;
         if ($request->hasFile('gambar_lapangan')) {
             $file = $request->file('gambar_lapangan');
-            $imageUrl = $this->uploadToSupabase($file);
+            $imagePath = $this->handleUploadImage($file);
         }
         
         Lapangan::create([
-            'nama_lapangan' => $request->nama_lapangan,
-            'jenis_lapangan' => $request->jenis_lapangan,
-            'gambar_lapangan' => $imageUrl,
+            'nama_lapangan'      => $request->nama_lapangan,
+            'jenis_lapangan'     => $request->jenis_lapangan,
+            'gambar_lapangan'    => $imagePath,
             'deskripsi_lapangan' => $request->deskripsi_lapangan,
-            'harga_sewa' => $request->harga_sewa,
-            'jam_buka' => $request->jam_buka,
-            'jam_tutup'=> $request->jam_tutup
+            'harga_sewa'         => $request->harga_sewa,
+            'status'             => $request->status ?? 'Tersedia',
+            'jam_buka'           => $request->jam_buka,
+            'jam_tutup'          => $request->jam_tutup
         ]);
 
-        return redirect()->route('admin.dashboard')
+        return redirect()->route('admin.semua-lapangan')
             ->with('success', 'Lapangan berhasil ditambahkan.');
     }
 
     public function getAll(Request $request)
     {
-        $query = \App\Models\Lapangan::with('jenisLapangan')->latest();
+        $query = Lapangan::with('jenisLapangan')->latest();
  
         if ($request->filled('search')) {
             $query->where('nama_lapangan', 'like', '%' . $request->search . '%');
@@ -92,7 +97,6 @@ class LapanganController extends Controller
  
         $jenis_lapangan = JenisLapangan::all();
         $totalLapangan  = Lapangan::count();
-       
  
         if (Auth::user()->role === 'admin') {
             $lapangan = $query->paginate(10)->withQueryString();
@@ -119,32 +123,39 @@ class LapanganController extends Controller
     public function update(Request $request, Lapangan $lapangan)
     {
         $request->validate([
-            'nama_lapangan' => 'sometimes|required',
-            'jenis_lapangan' => 'sometimes|required',
-            'harga_sewa' => 'sometimes|required|numeric|min:0',
-            'gambar_lapangan' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'nama_lapangan'      => 'required|string|max:255',
+            'jenis_lapangan'     => 'required|exists:jenis_lapangans,id',
+            'harga_sewa'         => 'required|numeric|min:0',
+            'gambar_lapangan'    => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:3072',
+            'jam_buka'           => 'required',
+            'jam_tutup'          => 'required',
+            'status'             => 'nullable|in:Tersedia,Penuh',
+            'deskripsi_lapangan' => 'nullable|string',
         ]);
 
-        $dataUpdate = $request->only([
-            'nama_lapangan',
-            'jenis_lapangan',
-            'deskripsi_lapangan',
-            'harga_sewa'
-        ]);
+        $dataUpdate = [
+            'nama_lapangan'      => $request->nama_lapangan,
+            'jenis_lapangan'     => $request->jenis_lapangan,
+            'deskripsi_lapangan' => $request->deskripsi_lapangan,
+            'harga_sewa'         => $request->harga_sewa,
+            'status'             => $request->status ?? $lapangan->status ?? 'Tersedia',
+            'jam_buka'           => $request->jam_buka,
+            'jam_tutup'          => $request->jam_tutup,
+        ];
 
         if ($request->hasFile('gambar_lapangan')) {
             if ($lapangan->gambar_lapangan) {
-                $this->deleteFromSupabase($lapangan->gambar_lapangan);
+                $this->handleDeleteImage($lapangan->gambar_lapangan);
             }
 
             $file = $request->file('gambar_lapangan');
-            $dataUpdate['gambar_lapangan'] = $this->uploadToSupabase($file);
+            $dataUpdate['gambar_lapangan'] = $this->handleUploadImage($file);
         }
 
         $lapangan->update($dataUpdate);
 
         return redirect()->route('admin.semua-lapangan')
-            ->with('success', 'Lapangan berhasil diupdate.');
+            ->with('success', 'Lapangan berhasil diperbarui.');
     }
 
     /**
@@ -153,65 +164,106 @@ class LapanganController extends Controller
     public function destroy(Lapangan $lapangan)
     {
         if ($lapangan->gambar_lapangan) {
-            $this->deleteFromSupabase($lapangan->gambar_lapangan);
+            $this->handleDeleteImage($lapangan->gambar_lapangan);
         }
 
         $lapangan->delete();
 
-        return redirect()->back()
+        return redirect()->route('admin.semua-lapangan')
             ->with('success', 'Lapangan berhasil dihapus.');
     }
 
-    public function show(lapangan $lapangan)
+    public function show(Lapangan $lapangan)
     {
-        $view = Auth::user()->role == 'admin' ? 'admin.admindashboard' : 'user.userdetaillapangan';
         $lapangan->load('jenisLapangan');
-        $totalPendapatan = Booking::where('status', 'selesai')
-    ->sum('total_harga');
-        return view($view, compact('lapangan','totalPendapatan'));
-    }
 
-    private function uploadToSupabase($file)
-    {
-        $fileName = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-        $fileContent = file_get_contents($file->getRealPath());
+        if (Auth::user()->role === 'admin') {
+            $totalBooking = Booking::where('lapangan_id', $lapangan->id)->count();
 
-        $supabaseUrl = env('SUPABASE_URL');
-        $supabaseKey = env('SUPABASE_API_KEY');
-        $bucket = env('SUPABASE_BUCKET');
+            $bookingsConfirmed = Booking::where('lapangan_id', $lapangan->id)
+                ->whereIn('status', ['confirmed', 'completed'])
+                ->get();
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $supabaseKey,
-            'apiKey' => $supabaseKey,
-        ])->attach(
-            'file',
-            $fileContent,
-            $fileName
-        )->post(
-            $supabaseUrl . '/storage/v1/object/' . $bucket . '/' . $fileName
-        );
+            $totalPendapatan = $bookingsConfirmed->sum(function ($b) use ($lapangan) {
+                $durasi = Carbon::parse($b->jam_mulai)->diffInHours(Carbon::parse($b->jam_selesai));
+                return $lapangan->harga_sewa * $durasi;
+            });
 
-        if ($response->successful()) {
-            return "{$supabaseUrl}/storage/v1/object/public/{$bucket}/{$fileName}";
+            $jamTerpakai = $bookingsConfirmed->sum(function ($b) {
+                return Carbon::parse($b->jam_mulai)->diffInHours(Carbon::parse($b->jam_selesai));
+            });
+
+            $recentBookings = Booking::where('lapangan_id', $lapangan->id)
+                ->with('user')
+                ->latest()
+                ->take(5)
+                ->get();
+
+            return view('admin.detaillapangan', compact(
+                'lapangan',
+                'totalPendapatan',
+                'totalBooking',
+                'jamTerpakai',
+                'recentBookings'
+            ));
         }
 
-        throw new \Exception('Upload ke Supabase gagal: ' . $response->body());
+        return view('user.userdetaillapangan', compact('lapangan'));
     }
 
-    private function deleteFromSupabase($url)
+    private function handleUploadImage($file): string
     {
         $supabaseUrl = env('SUPABASE_URL');
         $supabaseKey = env('SUPABASE_API_KEY');
-        $bucket = env('SUPABASE_BUCKET');
+        $bucket = env('SUPABASE_BUCKET', 'lapangan');
 
-        $baseUrl = "{$supabaseUrl}/storage/v1/object/public/{$bucket}/";
-        $fileName = str_replace($baseUrl, '', $url);
+        if ($supabaseUrl && $supabaseKey) {
+            try {
+                $fileName = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+                $fileContent = file_get_contents($file->getRealPath());
 
-        if ($fileName && $fileName !== $url) {
-            Http::withHeaders([
-                'Authorization' => 'Bearer ' . $supabaseKey,
-                'apiKey' => $supabaseKey,
-            ])->delete($supabaseUrl . '/storage/v1/object/' . $bucket . '/' . $fileName);
+                $response = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $supabaseKey,
+                    'apiKey' => $supabaseKey,
+                ])->attach('file', $fileContent, $fileName)
+                  ->post("{$supabaseUrl}/storage/v1/object/{$bucket}/{$fileName}");
+
+                if ($response->successful()) {
+                    return "{$supabaseUrl}/storage/v1/object/public/{$bucket}/{$fileName}";
+                }
+            } catch (\Throwable $e) {
+                // Fallback to local storage if Supabase fails
+            }
+        }
+
+        // Simpan ke storage/app/public/lapangans
+        $path = $file->store('lapangans', 'public');
+        return $path;
+    }
+
+    private function handleDeleteImage(string $imagePath): void
+    {
+        if (str_starts_with($imagePath, 'http://') || str_starts_with($imagePath, 'https://')) {
+            $supabaseUrl = env('SUPABASE_URL');
+            $supabaseKey = env('SUPABASE_API_KEY');
+            $bucket = env('SUPABASE_BUCKET', 'lapangan');
+
+            if ($supabaseUrl && $supabaseKey) {
+                try {
+                    $baseUrl = "{$supabaseUrl}/storage/v1/object/public/{$bucket}/";
+                    $fileName = str_replace($baseUrl, '', $imagePath);
+                    if ($fileName && $fileName !== $imagePath) {
+                        Http::withHeaders([
+                            'Authorization' => 'Bearer ' . $supabaseKey,
+                            'apiKey' => $supabaseKey,
+                        ])->delete("{$supabaseUrl}/storage/v1/object/{$bucket}/{$fileName}");
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore deletion error
+                }
+            }
+        } else {
+            Storage::disk('public')->delete($imagePath);
         }
     }
 }
