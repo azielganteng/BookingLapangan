@@ -4,15 +4,15 @@
 
 @section('content')
 
-<div class="p-4 sm:p-8">
+<div class="space-y-6 max-w-3xl mx-auto">
 
-    <div class="mb-6 flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-zinc-900">Edit Lapangan</h1>
-            <p class="text-zinc-500 text-sm mt-1">Perbarui informasi dan status lapangan</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-zinc-900">Edit Lapangan</h1>
+            <p class="text-zinc-500 text-xs sm:text-sm mt-1">Perbarui informasi dan status lapangan</p>
         </div>
         <a href="{{ route('admin.semua-lapangan') }}"
-           class="inline-flex items-center gap-2 px-4 py-2 border border-zinc-200 rounded-xl text-sm font-semibold text-zinc-600 hover:bg-zinc-50 transition-colors">
+           class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 border border-zinc-200 rounded-xl text-xs sm:text-sm font-semibold text-zinc-600 hover:bg-zinc-50 transition-colors self-start sm:self-auto">
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -21,7 +21,7 @@
     </div>
 
     @if($errors->any())
-        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-5 text-sm">
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs sm:text-sm">
             <ul class="list-disc ml-4 space-y-1">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -30,7 +30,7 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm p-4 sm:p-8">
+    <div class="bg-white rounded-2xl border border-zinc-200 shadow-xs p-5 sm:p-8">
 
         <form action="{{ route('update-lapangan', $lapangan->id) }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf

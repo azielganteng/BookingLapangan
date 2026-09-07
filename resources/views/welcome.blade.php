@@ -646,10 +646,17 @@
             .nav-links { gap: 16px; }
         }
         @media (max-width: 600px) {
-            .stats-inner { grid-template-columns: repeat(2, 1fr); }
+            nav { padding: 14px 4%; }
+            .nav-links a:not(.btn-nav) { display: none; }
+            .hero { padding: 90px 4% 40px; }
+            .hero-cta { flex-direction: column; }
+            .hero-cta a { width: 100%; justify-content: center; text-align: center; }
+            .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .sports-grid { grid-template-columns: 1fr; }
             .steps-grid { grid-template-columns: 1fr; }
-            h1 { font-size: 2.2rem; }
+            h1 { font-size: 2.1rem; }
+            .footer-inner { flex-direction: column; text-align: center; gap: 12px; }
+            .footer-links { justify-content: center; }
         }
 
         /* Animate on load */

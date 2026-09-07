@@ -4,25 +4,28 @@
 
 @section('content')
 
-<div class="p-4 sm:p-6">
+<div class="space-y-6 max-w-3xl mx-auto">
 
-    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-5 sm:mb-6">Booking Lapangan</h1>
+    <div>
+        <h1 class="text-xl sm:text-2xl font-bold text-zinc-900">Booking Lapangan</h1>
+        <p class="text-zinc-500 text-xs sm:text-sm mt-1">Pilih tanggal dan slot waktu bermain</p>
+    </div>
 
     @if(session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-5">
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs sm:text-sm">
             {{ session('error') }}
         </div>
     @endif
 
     @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-5">
+        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-xs sm:text-sm">
             {{ session('success') }}
         </div>
     @endif
 
     @if($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-5">
-            <ul class="list-disc ml-5">
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs sm:text-sm">
+            <ul class="list-disc ml-4 space-y-1">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -31,26 +34,26 @@
     @endif
 
     {{-- Info lapangan --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-zinc-100 p-4 sm:p-5 mb-4 flex items-center gap-4">
+    <div class="bg-white rounded-2xl shadow-xs border border-zinc-200 p-4 sm:p-5 flex items-center gap-4">
         @if($lapangan->gambar_url)
             <img src="{{ $lapangan->gambar_url }}"
-                 class="w-16 h-16 rounded-xl object-cover flex-shrink-0" alt="{{ $lapangan->nama_lapangan }}">
+                 class="w-16 h-16 rounded-xl object-cover shrink-0 border border-zinc-100" alt="{{ $lapangan->nama_lapangan }}">
         @endif
-        <div>
-            <h2 class="font-bold text-zinc-900 text-base">{{ $lapangan->nama_lapangan }}</h2>
-            <p class="text-sm text-zinc-500 mt-0.5">
+        <div class="min-w-0 flex-1">
+            <h2 class="font-bold text-zinc-900 text-sm sm:text-base truncate">{{ $lapangan->nama_lapangan }}</h2>
+            <p class="text-xs text-zinc-500 mt-0.5">
                 Jam Operasional:
                 <span class="font-semibold text-zinc-700">
                     {{ \Illuminate\Support\Str::substr($lapangan->jam_buka, 0, 5) }} – {{ \Illuminate\Support\Str::substr($lapangan->jam_tutup, 0, 5) }}
                 </span>
             </p>
-            <p class="text-sm text-green-600 font-semibold mt-0.5">
-                Rp{{ number_format($lapangan->harga_sewa, 0, ',', '.') }} / jam
+            <p class="text-xs sm:text-sm text-green-600 font-bold mt-1">
+                Rp {{ number_format($lapangan->harga_sewa, 0, ',', '.') }} / jam
             </p>
         </div>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-md p-4 sm:p-6">
+    <div class="bg-white rounded-2xl shadow-xs border border-zinc-200 p-4 sm:p-6">
 
         <form action="{{ route('booking.store') }}" method="POST">
 
@@ -59,7 +62,7 @@
             <input type="hidden" name="lapangan_id" value="{{ $lapangan->id }}">
 
             <div class="mb-5 sm:mb-6">
-                <label class="block mb-2 font-semibold text-gray-700 text-sm sm:text-base">Tanggal Booking</label>
+                <label class="block mb-2 font-semibold text-zinc-800 text-xs sm:text-sm">Tanggal Booking</label>
                 <input
                     type="date"
                     id="tanggal"
@@ -67,23 +70,23 @@
                     value="{{ old('tanggal', date('Y-m-d')) }}"
                     min="{{ date('Y-m-d') }}"
                     required
-                    class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm sm:text-base">
+                    class="w-full border border-zinc-200 rounded-xl p-3 focus:ring-2 focus:ring-zinc-900 focus:outline-none text-xs sm:text-sm bg-white">
             </div>
 
             <div class="mb-5 sm:mb-6">
-                <label class="block mb-3 sm:mb-4 font-semibold text-gray-700 text-sm sm:text-base">Pilih Jam Booking</label>
+                <label class="block mb-3 font-semibold text-zinc-800 text-xs sm:text-sm">Pilih Jam Booking</label>
 
                 {{--
                     Slot dirender dari $availableSlots yang dikirim controller
                     (sudah sesuai jam_buka s/d jam_tutup lapangan).
                     Slot yang sudah lewat (hari ini) dinonaktifkan via JS setelah render.
                 --}}
-                <div id="slotContainer" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2 sm:gap-3">
+                <div id="slotContainer" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-2.5">
                     @foreach($availableSlots as $jam)
                         <button
                             type="button"
                             data-jam="{{ $jam }}"
-                            class="slot-btn border rounded-xl py-2.5 sm:py-3 text-sm font-semibold transition hover:bg-blue-100">
+                            class="slot-btn border border-zinc-200 rounded-xl py-2.5 sm:py-3 text-xs sm:text-sm font-semibold transition hover:bg-zinc-100">
                             {{ $jam }}
                         </button>
                     @endforeach
@@ -91,46 +94,46 @@
 
                 {{-- Jika tidak ada slot sama sekali (lapangan tutup / jam_buka == jam_tutup) --}}
                 @if(empty($availableSlots))
-                    <p class="text-sm text-zinc-500 mt-3">Tidak ada slot tersedia untuk lapangan ini.</p>
+                    <p class="text-xs sm:text-sm text-zinc-500 mt-3">Tidak ada slot tersedia untuk lapangan ini.</p>
                 @endif
 
-                <div class="flex flex-wrap gap-3 sm:gap-5 mt-4 sm:mt-5 text-xs sm:text-sm">
-                    <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 sm:w-5 sm:h-5 bg-blue-500 rounded"></div>
-                        <span>Dipilih</span>
+                <div class="flex flex-wrap gap-3 sm:gap-5 mt-4 sm:mt-5 text-[11px] sm:text-xs">
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-3.5 h-3.5 bg-zinc-900 rounded-md"></div>
+                        <span class="text-zinc-600 font-medium">Dipilih</span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 sm:w-5 sm:h-5 bg-red-500 rounded"></div>
-                        <span>Sudah Dibooking</span>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-3.5 h-3.5 bg-red-500 rounded-md"></div>
+                        <span class="text-zinc-600 font-medium">Sudah Dibooking</span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 sm:w-5 sm:h-5 bg-zinc-300 rounded"></div>
-                        <span>Sudah Lewat</span>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-3.5 h-3.5 bg-zinc-200 rounded-md"></div>
+                        <span class="text-zinc-600 font-medium">Sudah Lewat</span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 sm:w-5 sm:h-5 border rounded"></div>
-                        <span>Tersedia</span>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-3.5 h-3.5 border border-zinc-300 rounded-md"></div>
+                        <span class="text-zinc-600 font-medium">Tersedia</span>
                     </div>
                 </div>
             </div>
 
             <div id="hiddenSlots"></div>
 
-            <div class="bg-gray-100 rounded-2xl p-4 sm:p-5 mb-5 sm:mb-6">
+            <div class="bg-zinc-50 rounded-2xl p-4 sm:p-5 mb-5 sm:mb-6 border border-zinc-100">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <p class="text-gray-500 text-xs sm:text-sm">Durasi</p>
-                        <h2 id="durasi" class="text-xl sm:text-2xl font-bold">0 Jam</h2>
+                        <p class="text-zinc-400 text-xs font-medium uppercase tracking-wider">Durasi</p>
+                        <h2 id="durasi" class="text-xl sm:text-2xl font-bold text-zinc-900 mt-1">0 Jam</h2>
                     </div>
                     <div>
-                        <p class="text-gray-500 text-xs sm:text-sm">Total Harga</p>
-                        <h2 id="harga" class="text-xl sm:text-2xl font-bold text-green-600">Rp 0</h2>
+                        <p class="text-zinc-400 text-xs font-medium uppercase tracking-wider">Total Harga</p>
+                        <h2 id="harga" class="text-xl sm:text-2xl font-bold text-green-600 mt-1">Rp 0</h2>
                     </div>
                 </div>
             </div>
 
-            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 sm:py-4 rounded-xl font-semibold text-sm sm:text-base transition-colors">
-                Booking Sekarang
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base transition-colors shadow-xs">
+                Konfirmasi Booking
             </button>
 
         </form>

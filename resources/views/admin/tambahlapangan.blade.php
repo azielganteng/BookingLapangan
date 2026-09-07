@@ -4,15 +4,15 @@
 
 @section('content')
 
-<div class="p-4 sm:p-8">
+<div class="space-y-6 max-w-3xl mx-auto">
 
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-zinc-900">Tambah Lapangan</h1>
-        <p class="text-zinc-500 text-sm mt-1">Isi data lapangan baru yang ingin ditambahkan</p>
+    <div>
+        <h1 class="text-xl sm:text-2xl font-bold text-zinc-900">Tambah Lapangan</h1>
+        <p class="text-zinc-500 text-xs sm:text-sm mt-1">Isi data lapangan baru yang ingin ditambahkan</p>
     </div>
 
     @if($errors->any())
-        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-5 text-sm">
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs sm:text-sm">
             <ul class="list-disc ml-4 space-y-1">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -21,7 +21,7 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm p-4 sm:p-8">
+    <div class="bg-white rounded-2xl border border-zinc-200 shadow-xs p-5 sm:p-8">
 
         <form action="{{ route('admin.store-lapangan') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf

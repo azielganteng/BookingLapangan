@@ -3,14 +3,14 @@
 @section('title', 'Detail ' . $lapangan->nama_lapangan)
 
 @section('content')
-<div class="p-4 sm:p-8">
+<div class="space-y-6 max-w-7xl mx-auto">
 
-    <div class="mb-5 sm:mb-6">
-        <a href="{{ route('user.cari-lapangan') }}" class="inline-flex items-center text-sm font-semibold text-gray-600 hover:text-green-600 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div>
+        <a href="{{ route('user.cari-lapangan') }}" class="inline-flex items-center text-xs sm:text-sm font-semibold text-zinc-600 hover:text-zinc-900 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Kembali ke Katalog
+            Kembali ke Cari Lapangan
         </a>
     </div>
 
@@ -18,24 +18,24 @@
 
         {{-- Kiri: Foto + Deskripsi --}}
         <div class="lg:col-span-2 flex flex-col gap-4 sm:gap-6">
-            <div class="bg-white rounded-2xl overflow-hidden border border-gray-100">
+            <div class="bg-white rounded-2xl overflow-hidden border border-zinc-200 shadow-xs">
                 @if($lapangan->gambar_url)
                     <img src="{{ $lapangan->gambar_url }}"
-                         class="w-full h-56 sm:h-96 object-cover"
+                         class="w-full h-52 sm:h-96 object-cover"
                          alt="Foto {{ $lapangan->nama_lapangan }}">
                 @else
-                    <div class="w-full h-56 sm:h-96 bg-gray-100 flex flex-col items-center justify-center text-gray-400">
+                    <div class="w-full h-52 sm:h-96 bg-zinc-100 flex flex-col items-center justify-center text-zinc-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        <span class="text-sm">Foto tidak tersedia</span>
+                        <span class="text-xs sm:text-sm">Foto tidak tersedia</span>
                     </div>
                 @endif
             </div>
 
-            <div class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100">
-                <h2 class="text-base sm:text-lg font-bold text-gray-900 mb-3">Deskripsi Lapangan</h2>
-                <p class="text-sm text-gray-600 leading-relaxed">
+            <div class="bg-white rounded-2xl p-4 sm:p-6 border border-zinc-200 shadow-xs">
+                <h2 class="text-sm sm:text-base font-bold text-zinc-900 mb-2.5">Deskripsi Lapangan</h2>
+                <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed">
                     {{ $lapangan->deskripsi_lapangan ?? 'Tidak ada deskripsi tambahan untuk lapangan ini.' }}
                 </p>
             </div>

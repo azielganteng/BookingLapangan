@@ -4,27 +4,27 @@
 
 @section('content')
 
-<div class="p-4 sm:p-8">
+<div class="space-y-6 max-w-7xl mx-auto">
 
     {{-- ── Top Navigation Bar ── --}}
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-zinc-900">{{ $lapangan->nama_lapangan }}</h1>
-            <p class="text-zinc-500 text-sm mt-1">
+            <h1 class="text-xl sm:text-2xl font-bold text-zinc-900">{{ $lapangan->nama_lapangan }}</h1>
+            <p class="text-zinc-500 text-xs sm:text-sm mt-1">
                 Kategori: <span class="font-semibold text-zinc-800">{{ $lapangan->jenisLapangan->nama_jenis ?? '-' }}</span> &bull;
                 ID: LPG-{{ str_pad($lapangan->id, 3, '0', STR_PAD_LEFT) }}
             </p>
         </div>
         <div class="flex items-center gap-2">
             <a href="{{ route('edit-lapangan', $lapangan->id) }}"
-               class="inline-flex items-center gap-1.5 px-4 py-2 bg-zinc-900 hover:bg-zinc-700 text-white rounded-xl text-sm font-semibold transition-colors">
+               class="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 bg-zinc-900 hover:bg-zinc-700 text-white rounded-xl text-xs sm:text-sm font-semibold transition-colors">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
                 Edit
             </a>
             <a href="{{ route('admin.semua-lapangan') }}"
-               class="inline-flex items-center gap-1.5 px-4 py-2 border border-zinc-200 rounded-xl text-sm font-semibold text-zinc-600 hover:bg-zinc-50 transition-colors">
+               class="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 border border-zinc-200 rounded-xl text-xs sm:text-sm font-semibold text-zinc-600 hover:bg-zinc-50 transition-colors">
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -34,7 +34,7 @@
     </div>
 
     {{-- ── Stat Cards ── --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div class="bg-white border border-zinc-200 rounded-2xl p-4 sm:p-5 shadow-sm">
             <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">Total Booking</p>
             <p class="text-2xl font-bold text-blue-600 mt-2">{{ $totalBooking ?? 0 }}</p>
